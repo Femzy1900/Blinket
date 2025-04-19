@@ -47,6 +47,13 @@ export async function registerUserController(req, res){
                 url: VerifyEmailUrl
             })
         })
+
+        return response.json({
+            message: "User register successfully",
+            error: false,
+            success: true,
+            data: save
+        })
         
     } catch (error) {
         return res.status(500).json({
