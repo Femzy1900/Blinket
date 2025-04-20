@@ -99,6 +99,43 @@ export async function registerUserController(req, res){
 //login controller
 
 export async function loginController(req, res) {
-    
+    try {
+        const { email, password } = req.body
+
+        const user = await UserModel.findOne({ email })
+        
+        if (!user) {
+            return res.status(400).jsin({
+                message: "Invalid email or password",
+                error: true,
+                success: false
+            })
+        }
+
+        // const checkAccountStatus = await UserModel.findOne({ email, verify_email: false})
+        if(user.status === "inactive"){
+            return res.status(400).json({
+                message: "Contact with admin to active your account",
+                error: true,
+                success: false
+            })
+        }
+
+        const checkPassword = await bcryptjs.compare(password, user.password)    
+        
+        if(!checkPassword) {
+            return res.status(400).json({
+                maessage: "Invalid email or password",
+                error: true,
+                success: false
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
     
 }
