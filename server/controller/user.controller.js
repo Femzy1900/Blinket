@@ -2,6 +2,8 @@ import sendEmail from "../config/sendEmail.js";
 import UserModel from "../models/user.model.js";
 import bcryptjs from "bcryptjs"
 import verifyEmailTemplate from "../utils/verifyEmailTemplate.js";
+import generateAccessToken from "../utils/generateAccessToken.js";
+import generateRefreshToken from "../utils/generateRefreshToken.js";
 
 export async function registerUserController(req, res){
     try{
@@ -102,6 +104,14 @@ export async function loginController(req, res) {
     try {
         const { email, password } = req.body
 
+        if(!email || !password) {
+            return res.status(400).json({
+                message: "provide email and password",
+                error: true,
+                success: false
+            })
+        }
+
         const user = await UserModel.findOne({ email })
         
         if (!user) {
@@ -130,6 +140,28 @@ export async function loginController(req, res) {
                 success: false
             })
         }
+
+        const accessToken = await generateAccessToken(user._id)
+        const refreshToken = await generateRefreshToken(user._id)
+
+        const cookiesOptions = {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        }
+        response.cookie("accessToken", accessToken, cookiesOptions)
+        response.cookie("refreshToken", refreshToken, cookiesOptions)
+
+        return res.json({
+            message: "Login successfully",
+            error: false,
+            success: true,
+            data: {
+                _id: user._id,
+                refreshToken: refreshToken,
+                accessToken: accessToken
+            }
+        })
     } catch (error) {
         return res.status(500).json({
             message: error.message || error,
