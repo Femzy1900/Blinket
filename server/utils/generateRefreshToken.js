@@ -1,14 +1,19 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+import UserModel from "../models/user.model";
 
-const generateRefreshToken = (userId) => {
-    const secretKey = process.env.REFRESH_TOKEN_SECRET;
-    const expiresIn = '7d'; // Refresh token valid for 7 days
+const generateRefreshToken = async (userId) => {
+  const token = jwt.sign({ id: userId }, process.env.SECRET_KEY_ACCESS_TOKEN, {
+    expiresIn: "30d",
+  });
 
-    if (!secretKey) {
-        throw new Error('REFRESH_TOKEN_SECRET is not defined in environment variables');
+  const updateRefreshToken = await UserModel.updateOne(
+    { _id: userId },
+    {
+        refreshToken: token,
     }
+  )
 
-    return jwt.sign({ id: userId }, secretKey, { expiresIn });
+  return token;
 };
 
-module.exports = generateRefreshToken;
+export default generateRefreshToken;
