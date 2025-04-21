@@ -175,6 +175,7 @@ export async function loginController(req, res) {
 //logout
 export async function logoutController(req, res) {
     try {
+        const user = req.userId
         const cookiesOptions = {
             httpOnly: true,
             secure: true,
@@ -182,6 +183,12 @@ export async function logoutController(req, res) {
         }
         res.clearCookie("accessToken", cookiesOptions)
         res.clearCookie("refreshToken", cookiesOptions)
+
+        const removeRefreshToken = await UserModel.updateOne({ _id: user }, {
+            $set: {
+                refresh_token: ""
+            }
+        })
 
         return res.json({
             message: "Logout successfully",
