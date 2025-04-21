@@ -171,3 +171,29 @@ export async function loginController(req, res) {
     }
     
 }
+
+//logout
+export async function logoutController(req, res) {
+    try {
+        const cookiesOptions = {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        }
+        res.clearCookie("accessToken", cookiesOptions)
+        res.clearCookie("refreshToken", cookiesOptions)
+
+        return res.json({
+            message: "Logout successfully",
+            error: false,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+        
+    }
+}
