@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs"
 import verifyEmailTemplate from "../utils/verifyEmailTemplate.js";
 import generateAccessToken from "../utils/generateAccessToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
+import uploadImageCloudinary from "../utils/uploadImageCloudinary.js";
 
 export async function registerUserController(req, res){
     try{
@@ -208,9 +209,44 @@ export async function logoutController(req, res) {
 //upload userAvatar
 export async function uploadAvatar(req, res) {
     try {
-        const image = req.file
+        const userId = req.userId // auth middleware
+        const image = req.file // multer middleware
+        const upload = await uploadImageCloudinary(image)
+
+        const updateUser = await UserModel.findByIdandUpdate(userId,{
+            avatar: upload.url
+        })
+
+        return response.json({
+            message: 'upload profile',
+            data: {
+                _id: userId,
+                avatar: upload.url
+            }
+        })
 
         console.log(image)
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
+
+// update user details 
+export async function updateUserDetails(req, res) {
+    try {
+        const userId = req.userId // auth middleware
+        const {name, email, password, mobile} = req.body
+
+        const updateUser = await UserModel.findByIdAndUpdate(userId, {
+            ...(name && {name: name}),
+            ...(email && {email: email}),
+            ...(mobile && {mobile: mobile}),
+        })
+        
     } catch (error) {
         return res.status(500).json({
             message: error.message || error,
