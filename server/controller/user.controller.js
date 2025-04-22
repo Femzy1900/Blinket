@@ -6,6 +6,7 @@ import generateAccessToken from "../utils/generateAccessToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
 import uploadImageCloudinary from "../utils/uploadImageCloudinary.js";
 import generatedOTP from "../utils/generateOTP.js";
+import forgotPasswordTemplate from "../utils/forgotPasswordTemplate.js";
 
 export async function registerUserController(req, res){
     try{
@@ -290,13 +291,94 @@ export async function forgotPasswordController(req, res) {
     const otp = generatedOTP()
     const expireTime = new Date() + 60 * 60 * 1000 // 1hour
 
-    const update = await UserModel.findByIdAndUpdate(user._id)
+    const update = await UserModel.findByIdAndUpdate(user._id, {
+        forgot_password_otp: otp,
+        forgot_password_expiry: new Date(expireTime).toISOString()
+    })
+
+    await sendEmail({
+        sendTo: email,
+        subject: "Forgot password f(or Blinket",
+        html: forgotPasswordTemplate({
+            name: user.name,
+            otp: otp
+        })
+    })
+
+    return res.status(400).json({
+        message: "check your email",
+        error: false,
+        success: true
+    })
         
     } catch (error) {
         return res.status(500).json({
             message: error.message || error,
             error: true,
             success: false
+        })
+    }
+}
+
+export async function verifyForgotPasswordOtp(request,response){
+    try {
+        const { email , otp }  = request.body
+
+        if(!email || !otp){
+            return response.status(400).json({
+                message : "Provide required field email, otp.",
+                error : true,
+                success : false
+            })
+        }
+
+        const user = await UserModel.findOne({ email })
+
+        if(!user){
+            return response.status(400).json({
+                message : "Email not available",
+                error : true,
+                success : false
+            })
+        }
+
+        const currentTime = new Date().toISOString()
+
+        if(user.forgot_password_expiry < currentTime  ){
+            return response.status(400).json({
+                message : "Otp is expired",
+                error : true,
+                success : false
+            })
+        }
+
+        if(otp !== user.forgot_password_otp){
+            return response.status(400).json({
+                message : "Invalid otp",
+                error : true,
+                success : false
+            })
+        }
+
+        //if otp is not expired
+        //otp === user.forgot_password_otp
+
+        const updateUser = await UserModel.findByIdAndUpdate(user?._id,{
+            forgot_password_otp : "",
+            forgot_password_expiry : ""
+        })
+        
+        return response.json({
+            message : "Verify otp successfully",
+            error : false,
+            success : true
+        })
+
+    } catch (error) {
+        return response.status(500).json({
+            message : error.message || error,
+            error : true,
+            success : false
         })
     }
 }
