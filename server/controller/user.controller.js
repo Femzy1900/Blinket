@@ -5,6 +5,7 @@ import verifyEmailTemplate from "../utils/verifyEmailTemplate.js";
 import generateAccessToken from "../utils/generateAccessToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
 import uploadImageCloudinary from "../utils/uploadImageCloudinary.js";
+import generatedOTP from "../utils/generateOTP.js";
 
 export async function registerUserController(req, res){
     try{
@@ -272,3 +273,30 @@ export async function updateUserDetails(req, res) {
 }
 
 //forgot password
+export async function forgotPasswordController(req, res) {
+    try {
+    const {email} = req.body
+
+    const user = await UserModel.findOne({ email })
+
+    if(!user) {
+        return res.status(400).json({
+            message: "Email not available",
+            error: true,
+            success: false
+        })
+    }
+
+    const otp = generatedOTP()
+    const expireTime = new Date() + 60 * 60 * 1000 // 1hour
+
+    const update = await UserModel.findByIdAndUpdate(user._id)
+        
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || error,
+            error: true,
+            success: false
+        })
+    }
+}
