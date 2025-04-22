@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import { registerUserController, loginController, logoutController, uploadAvatar } from '../controller/user.controller.js';
+import { registerUserController, loginController, logoutController, uploadAvatar, updateUserDetails } from '../controller/user.controller.js';
 import { auth } from '../middleware/auth.middleware.js';
 import { upload } from '../middleware/upload.middleware.js';
 
@@ -10,6 +10,7 @@ userRouter.post('/register', registerUserController);
 userRouter.post('/login', loginController)
 userRouter.get('logout', auth, logoutController)
 userRouter.put('upload-avatar', auth, upload.single('avatar'), uploadAvatar  )
+userRouter.put('update-user', auth, updateUserDetails)
 
 
 export default userRouter;

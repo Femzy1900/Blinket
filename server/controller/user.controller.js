@@ -240,11 +240,26 @@ export async function updateUserDetails(req, res) {
     try {
         const userId = req.userId // auth middleware
         const {name, email, password, mobile} = req.body
+        
+        let hashPassword = ''
 
-        const updateUser = await UserModel.findByIdAndUpdate(userId, {
+        if(password) {
+            const salt = await bcryptjs.genSalt(10)
+            hashPassword = await bcryptjs.hash(password, salt)
+        }
+
+        const updateUser = await UserModel.updateOne({_id: userId}, {
             ...(name && {name: name}),
             ...(email && {email: email}),
             ...(mobile && {mobile: mobile}),
+            ...(password && {password: hashPassword}),
+        })
+
+        return res.json({
+            message: "updated user successfully",
+            error: false,
+            success: true,
+            data: updateUser
         })
         
     } catch (error) {
@@ -255,3 +270,5 @@ export async function updateUserDetails(req, res) {
         })
     }
 }
+
+//forgot password
