@@ -460,7 +460,7 @@ export async function refreshToken(request,response){
 
         const userId = verifyToken?._id
 
-        const newAccessToken = await generatedAccessToken(userId)
+        const newAccessToken = await generateAccessToken(userId)
 
         const cookiesOption = {
             httpOnly : true,
