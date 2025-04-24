@@ -118,15 +118,15 @@ export async function loginController(req, res) {
         const user = await UserModel.findOne({ email })
         
         if (!user) {
-            return res.status(400).jsin({
-                message: "Invalid email or password",
+            return res.status(400).json({
+                message: "User not Registered",
                 error: true,
                 success: false
             })
         }
 
         // const checkAccountStatus = await UserModel.findOne({ email, verify_email: false})
-        if(user.status === "inactive"){
+        if(user.status !== "Active"){
             return res.status(400).json({
                 message: "Contact with admin to active your account",
                 error: true,
@@ -138,7 +138,7 @@ export async function loginController(req, res) {
         
         if(!checkPassword) {
             return res.status(400).json({
-                maessage: "Invalid email or password",
+                message: "Check your password",
                 error: true,
                 success: false
             })
@@ -147,22 +147,25 @@ export async function loginController(req, res) {
         const accessToken = await generateAccessToken(user._id)
         const refreshToken = await generateRefreshToken(user._id)
 
+        const updateUser = await UserModel.findByIdAndUpdate(user?._id,{
+            last_login_date : new Date()
+        })
+
         const cookiesOptions = {
             httpOnly: true,
             secure: true,
-            sameSite: "none"
+            sameSite: "None"
         }
-        response.cookie("accessToken", accessToken, cookiesOptions)
-        response.cookie("refreshToken", refreshToken, cookiesOptions)
+        res.cookie("accessToken", accessToken, cookiesOptions)
+        res.cookie("refreshToken", refreshToken, cookiesOptions)
 
         return res.json({
             message: "Login successfully",
             error: false,
             success: true,
             data: {
-                _id: user._id,
-                refreshToken: refreshToken,
-                accessToken: accessToken
+                accessToken,
+                refreshToken
             }
         })
     } catch (error) {
@@ -178,19 +181,17 @@ export async function loginController(req, res) {
 //logout
 export async function logoutController(req, res) {
     try {
-        const user = req.userId
+        const userid = req.userId
         const cookiesOptions = {
             httpOnly: true,
             secure: true,
-            sameSite: "none"
+            sameSite: "None"
         }
         res.clearCookie("accessToken", cookiesOptions)
         res.clearCookie("refreshToken", cookiesOptions)
 
-        const removeRefreshToken = await UserModel.updateOne({ _id: user }, {
-            $set: {
-                refresh_token: ""
-            }
+        const removeRefreshToken = await UserModel.findByIdAndUpdate(userid, {
+            refresh_token: ""
         })
 
         return res.json({
