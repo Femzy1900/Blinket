@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-import UserModel from "../models/user.model";
+import jwt from "jsonwebtoken"
+import UserModel from "../models/user.model.js";
 
 const generateRefreshToken = async (userId) => {
   const token = jwt.sign({ id: userId }, process.env.SECRET_KEY_REFRESH_TOKEN, {

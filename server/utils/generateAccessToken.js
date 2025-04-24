@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken"
 
 const generateAccessToken = async (userId) => {
   const token = jwt.sign({ id: userId }, 
@@ -9,4 +9,4 @@ const generateAccessToken = async (userId) => {
   return token;
 };
 
-module.exports = generateAccessToken;
+export default generateAccessToken; 

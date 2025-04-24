@@ -1,7 +1,7 @@
 import {Router} from 'express';
-import { registerUserController, loginController, logoutController, uploadAvatar, updateUserDetails, forgotPasswordController, verifyForgotPasswordOtp, resetpassword, refreshToken, userDetails } from '../controller/user.controller.js';
-import { auth } from '../middleware/auth.middleware.js';
-import { upload } from '../middleware/upload.middleware.js';
+import { registerUserController, loginController, verifyEmailController, logoutController, uploadAvatar, updateUserDetails, forgotPasswordController, verifyForgotPasswordOtp, resetpassword, refreshToken, userDetails } from '../controller/user.controller.js';
+import  auth  from '../middleware/auth.js';
+import  upload  from '../middleware/multer.js';
 
 const userRouter = Router();
 
