@@ -216,11 +216,11 @@ export async function uploadAvatar(req, res) {
         const image = req.file // multer middleware
         const upload = await uploadImageCloudinary(image)
 
-        const updateUser = await UserModel.findByIdandUpdate(userId,{
+        const updateUser = await UserModel.findByIdAndUpdate(userId,{
             avatar: upload.url
         })
 
-        return response.json({
+        return res.json({
             message: 'upload profile',
             data: {
                 _id: userId,
