@@ -42,16 +42,16 @@ export async function registerUserController(req, res){
         const newUser = new UserModel(payload)
         const save = await newUser.save()
 
-        // const VerifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${save?._id}`
+        const VerifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${save?._id}`
 
-        // const verifyEmail = await sendEmail({
-        //     sendTo: email,
-        //     subject: "Verify email from blinket",
-        //     html: verifyEmailTemplate({
-        //         name,
-        //         url: VerifyEmailUrl
-        //     })
-        // })
+        const verifyEmail = await sendEmail({
+            sendTo: email,
+            subject: "Verify email from blinket",
+            html: verifyEmailTemplate({
+                name,
+                url: VerifyEmailUrl
+            })
+        })
 
         return res.json({
             message: "User register successfully",
