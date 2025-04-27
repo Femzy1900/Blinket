@@ -9,7 +9,7 @@ const Search = () => {
   const [isSearchPage, setIsSearchPage] = useState(false);
   // Check if the current page is the search page
   useEffect(() => {
-    const isSearch = location.pathname === "/search";
+    const isSearch = location.pathname === "/search"
     setIsSearchPage(isSearch);
   }, [location]);
 
@@ -23,7 +23,7 @@ const Search = () => {
       </button>
       <div className="">
         {
-          isSearchPage ? (
+          !isSearchPage ? (
             //not in search page
             <div className="" onClick={redirectToSearchPage}>
               <TypeAnimation
