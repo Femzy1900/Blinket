@@ -1,12 +1,18 @@
-import React from "react"
+import React from "react";
+import { Outlet } from "react-router-dom";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function App() {
-
   return (
-    <div className="bg-red-500">
-      <h1>Hello World</h1>
-    </div>
-  )
+    <>
+      <Header/>
+      <main>
+        <Outlet />
+      </main>
+      <Footer />
+    </>
+  );
 }
 
-export default App
+export default App;
