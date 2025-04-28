@@ -53,7 +53,7 @@ const Header = () => {
 
               {/* Desktop */}
               <div  className="hidden lg:flex items-center gap-10">
-                <button onClick={redirectToLoginPage}>
+                <button onClick={redirectToLoginPage} className="text-lg px-2">
                   login
                 </button>
                 <button className="flex items-center gap-2 bg-green-800 hover:bg-green-700 px-2 py-3 rounded text-white">
