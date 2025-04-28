@@ -3,9 +3,9 @@ import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
 import {Link, useNavigate} from 'react-router-dom'
 import toast from 'react-hot-toast';
-// import Axios from '../utils/Axios';
-// import SummaryApi from '../common/SummaryApi';
-// import AxiosToastError from '../utils/AxiosToastError';
+import Axios from '../utils/Axios';
+import SummaryApi from '../common/SummaryApi';
+import AxiosToastError from '../utils/AxiosToastError';
 
 const Register = () => {
   const [data, setData] = useState({
@@ -16,6 +16,7 @@ const Register = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,28 +42,28 @@ const Register = () => {
     }
 
     try {
-        // const response = await Axios({
-        //     ...SummaryApi.register,
-        //     data : data
-        // })
+        const response = await Axios({
+            ...SummaryApi.register,
+            data : data
+        })
         
-        // if(response.data.error){
-        //     toast.error(response.data.message)
-        // }
+        if(response.data.error){
+            toast.error(response.data.message)
+        }
 
-        // if(response.data.success){
-        //     toast.success(response.data.message)
-        //     setData({
-        //         name : "",
-        //         email : "",
-        //         password : "",
-        //         confirmPassword : ""
-        //     })
-        //     navigate("/login")
-        // }
+        if(response.data.success){
+            toast.success(response.data.message)
+            setData({
+                name : "",
+                email : "",
+                password : "",
+                confirmPassword : ""
+            })
+            navigate("/login")
+        }
 
     } catch (error) {
-        // AxiosToastError(error)
+        AxiosToastError(error)
     }
 
 

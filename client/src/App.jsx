@@ -2,6 +2,7 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import toast, { Toaster } from "react-hot-toast";
 
 function App() {
   return (
@@ -11,6 +12,17 @@ function App() {
         <Outlet />
       </main>
       <Footer />
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: "#333",
+            color: "#fff",
+          },
+        }}
+      />
     </>
   );
 }
